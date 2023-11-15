@@ -27,7 +27,7 @@ import os
 import logging
 import unittest
 from decimal import Decimal
-from service.models import Product, Category, db
+from service.models import Product, Category, db, DataValidationError
 from service import app
 from tests.factories import ProductFactory
 
@@ -132,6 +132,17 @@ class TestProductModel(unittest.TestCase):
         self.assertEqual(len(products), 1)
         self.assertEqual(products[0].id, original_id)
         self.assertEqual(products[0].description, "testing")
+    
+    def test_update_a_product_with_empty_id(self):
+        """Test update with invalid ID should raise an exception"""
+        # Create a product with a factory or setup
+        product = ProductFactory()
+
+        # Set the product ID to an empty value
+        product.id = None
+
+        # Attempt to update the product, expecting an exception
+        self.assertRaises(DataValidationError, product.update)
 
     def test_delete_a_product(self):
         """It should Delete a Product"""
